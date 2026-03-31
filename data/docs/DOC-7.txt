@@ -1,0 +1,14 @@
+DOC-7: Milestone Experimental Advances in Quantum Hardware (2000–2015)
+=======================================================================
+
+The period from 2000 to 2015 marked the transition of quantum computing from a predominantly theoretical discipline into an experimental engineering field, with successive hardware milestones demonstrating increasing qubit counts, coherence times, and gate fidelities across multiple physical platforms.
+
+In 2001, Isaac Chuang's group at IBM Almaden executed Shor's algorithm on a 7-qubit NMR quantum processor, as described in the context of early hardware development. While NMR was subsequently abandoned as a scalable platform, the 2001 experiment validated that complex quantum algorithms could be physically executed on real devices.
+
+A pivotal shift in hardware direction occurred in 2003 when researchers at Yale University, led by Robert Schoelkopf and Michel Devoret, demonstrated that superconducting circuits — specifically Josephson junction-based circuits cooled to near absolute zero — could function as qubits with measurable quantum properties. This class of qubit, known as the transmon qubit (a refinement introduced by the Yale group in 2007), became the dominant hardware platform for subsequent quantum computing development by IBM, Google, and other major research groups. Superconducting qubits offered the advantage of being fabricated using techniques adapted from conventional semiconductor manufacturing, making them far more amenable to engineering scale-up than trapped-ion or NMR approaches.
+
+In 2012, the French physicist Serge Haroche and the American physicist David Wineland were jointly awarded the Nobel Prize in Physics for their experimental work on measuring and manipulating individual quantum systems — Haroche using microwave photons trapped in superconducting cavities, and Wineland using trapped-ion systems at NIST. Their techniques directly underpinned the measurement and control methods used in quantum computing hardware.
+
+A landmark in quantum error correction arrived in 2014, when John Martinis and his group at the University of California Santa Barbara (UCSB) demonstrated a 5-qubit superconducting array capable of detecting quantum errors in real time using syndrome measurements consistent with Shor's 1995 theoretical framework. This experiment provided the first physical evidence that the theoretical error correction models were implementable on real superconducting hardware. The significance of the Martinis group's work attracted the attention of Google, which acquired the entire UCSB quantum hardware team in 2014, integrating them into what would become Google's quantum AI division.
+
+By 2015, IBM had begun operating a 5-qubit superconducting quantum processor internally, laying the groundwork for the IBM Quantum Experience cloud platform launched in 2016, which made quantum hardware publicly accessible for the first time.

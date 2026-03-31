@@ -1,0 +1,15 @@
+# RAG system
+sentence-transformers>=2.2.2
+faiss-cpu>=1.7.4
+nltk>=3.8.1
+transformers>=4.35.0
+torch>=2.1.0
+
+# Evaluation
+rouge-score>=0.1.2
+numpy>=1.26.0
+pandas>=2.0.0
+
+# General utilities
+tqdm>=4.66.1
+colorama>=0.4.6

@@ -1,0 +1,110 @@
+[
+    {
+        "question": "In what year did Richard Feynman first propose the idea of using quantum mechanical computers to simulate quantum systems, and at which conference was this proposal delivered?",
+        "scores": {
+            "factual_correctness": 1,
+            "completeness": 2,
+            "coherence": 3,
+            "grounding": 1
+        }
+    },
+    {
+        "question": "Who formalized the quantum Turing machine in 1985, and which classical computation model did they extend to create it?",
+        "scores": {
+            "factual_correctness": 3,
+            "completeness": 2,
+            "coherence": 1,
+            "grounding": 1
+        }
+    },
+    {
+        "question": "Why did the publication of Shor's algorithm in 1994 pose a direct threat to RSA encryption?",
+        "scores": {
+            "factual_correctness": 1,
+            "completeness": 2,
+            "coherence": 3,
+            "grounding": 1
+        }
+    },
+    {
+        "question": "What is the mechanism by which Grover's algorithm achieves a quadratic speedup over classical linear search?",
+        "scores": {
+            "factual_correctness": 3,
+            "completeness": 2,
+            "coherence": 1,
+            "grounding": 3
+        }
+    },
+    {
+        "question": "What fundamental architectural difference distinguishes D-Wave Systems' quantum hardware from the universal gate-model computers pursued by IBM and academic groups?",
+        "scores": {
+            "factual_correctness": 1,
+            "completeness": 2,
+            "coherence": 3,
+            "grounding": 1
+        }
+    },
+    {
+        "question": "What is the quantum no-cloning theorem, who proved it, and why does it make quantum error correction more difficult than classical error correction?",
+        "scores": {
+            "factual_correctness": 3,
+            "completeness": 2,
+            "coherence": 1,
+            "grounding": 3
+        }
+    },
+    {
+        "question": "Which research group demonstrated real-time quantum error detection on a superconducting array in 2014, and what organization subsequently acquired them?",
+        "scores": {
+            "factual_correctness": 3,
+            "completeness": 2,
+            "coherence": 1,
+            "grounding": 1
+        }
+    },
+    {
+        "question": "What computational task did Google's Sycamore processor perform to demonstrate quantum supremacy in 2019, and why was this task chosen?",
+        "scores": {
+            "factual_correctness": 1,
+            "completeness": 2,
+            "coherence": 3,
+            "grounding": 1
+        }
+    },
+    {
+        "question": "How did Deutsch's 1985 quantum Turing machine build directly upon the theoretical gap that Feynman identified in his 1981 proposal?",
+        "scores": {
+            "factual_correctness": 3,
+            "completeness": 2,
+            "coherence": 1,
+            "grounding": 3
+        }
+    },
+    {
+        "question": "Compare the type of speedup offered by Shor's algorithm and Grover's algorithm, and explain why their implications for classical cryptography differ in severity.",
+        "scores": {
+            "factual_correctness": 1,
+            "completeness": 2,
+            "coherence": 3,
+            "grounding": 1
+        }
+    },
+    {
+        "question": "Describe the theoretical-to-experimental progression of quantum error correction from Shor's 1995 paper to the 2014 UCSB hardware demonstration.",
+        "scores": {
+            "factual_correctness": 1,
+            "completeness": 2,
+            "coherence": 1,
+            "grounding": 2
+        }
+    },
+    {
+        "question": "Both D-Wave Systems and Google made major quantum computing announcements that were publicly contested \u00e2\u20ac\u201d what was contested about each, and what do those disputes reveal about measuring genuine quantum advantage?",
+        "scores": {
+            "factual_correctness": 1,
+            "completeness": 2,
+            "coherence": 3,
+            "grounding": 1
+        }
+    }
+]

@@ -1,0 +1,86 @@
+[
+  {
+    "id": "Q01",
+    "type": "single-doc | exact-match (year)",
+    "source_docs": ["DOC-1"],
+    "question": "In what year did Richard Feynman first propose the idea of using quantum mechanical computers to simulate quantum systems, and at which conference was this proposal delivered?",
+    "expected_answer": "Richard Feynman delivered his proposal in 1981 at the First Conference on the Physics of Computation, held jointly at MIT and Tufts University. The proposal was later formalized in a 1982 paper titled 'Simulating Physics with Computers.' Feynman argued that classical boolean computers are fundamentally incapable of efficiently simulating quantum systems because the required variables grow exponentially with the number of particles."
+  },
+  {
+    "id": "Q02",
+    "type": "single-doc | exact-match (name + year)",
+    "source_docs": ["DOC-2"],
+    "question": "Who formalized the quantum Turing machine in 1985, and which classical computation model did they extend to create it?",
+    "expected_answer": "David Deutsch formalized the quantum Turing machine in his 1985 paper published in the Proceedings of the Royal Society of London. He extended Alan Turing's classical Turing machine model, originally conceived in 1936, by replacing classical states with quantum superpositions, allowing the machine to process multiple computational paths simultaneously."
+  },
+  {
+    "id": "Q03",
+    "type": "single-doc | factual",
+    "source_docs": ["DOC-3"],
+    "question": "Why did the publication of Shor's algorithm in 1994 pose a direct threat to RSA encryption?",
+    "expected_answer": "RSA encryption's security relies on the classical computational difficulty of factoring large composite integers — multiplying two large primes is easy, but recovering those primes from their product is intractable for classical computers. Shor's algorithm demonstrated that a quantum computer could factor large integers in polynomial time using quantum Fourier transform operations, which directly invalidated the hardness assumption underlying RSA. A quantum computer running Shor's algorithm could therefore break RSA encryption by factoring a public key in feasible time."
+  },
+  {
+    "id": "Q04",
+    "type": "single-doc | factual",
+    "source_docs": ["DOC-4"],
+    "question": "What is the mechanism by which Grover's algorithm achieves a quadratic speedup over classical linear search?",
+    "expected_answer": "Grover's algorithm uses a process called amplitude amplification. It initializes all N candidate states simultaneously through quantum superposition, then iteratively applies two operations: an oracle that flips the phase of the target state, and a diffusion operator that inverts all amplitudes around their mean. Each iteration increases the probability amplitude of the correct answer while decreasing amplitudes of incorrect candidates. After approximately (π/4)√N iterations, measurement yields the correct answer with high probability, achieving a √N speedup over classical linear search."
+  },
+  {
+    "id": "Q05",
+    "type": "single-doc | factual",
+    "source_docs": ["DOC-5"],
+    "question": "What fundamental architectural difference distinguishes D-Wave Systems' quantum hardware from the universal gate-model computers pursued by IBM and academic groups?",
+    "expected_answer": "D-Wave Systems built quantum annealing hardware, which uses quantum tunnelling to search for the global minimum of a cost function and is suited only for certain combinatorial optimization problems. This is fundamentally different from universal gate-model quantum computers, which can execute arbitrary quantum algorithms including Shor's and Grover's algorithms. D-Wave's approach cannot run general quantum algorithms, making it architecturally incompatible with the theoretical frameworks developed by Shor, Grover, and Deutsch."
+  },
+  {
+    "id": "Q06",
+    "type": "single-doc | factual",
+    "source_docs": ["DOC-6"],
+    "question": "What is the quantum no-cloning theorem, who proved it, and why does it make quantum error correction more difficult than classical error correction?",
+    "expected_answer": "The quantum no-cloning theorem states that it is impossible to create an identical copy of an arbitrary unknown quantum state. It was proved independently by William Wootters, Wojciech Zurek, and Dennis Dieks in 1982. It makes quantum error correction harder than classical error correction because classical systems protect data by simply storing redundant copies — if one copy flips, the majority vote corrects it. Quantum information cannot be duplicated, so this straightforward approach is forbidden, requiring more sophisticated syndrome-measurement-based techniques instead."
+  },
+  {
+    "id": "Q07",
+    "type": "single-doc | exact-match (name)",
+    "source_docs": ["DOC-7"],
+    "question": "Which research group demonstrated real-time quantum error detection on a superconducting array in 2014, and what organization subsequently acquired them?",
+    "expected_answer": "John Martinis and his group at the University of California Santa Barbara (UCSB) demonstrated a 5-qubit superconducting array capable of detecting quantum errors in real time using syndrome measurements in 2014. The significance of this work attracted Google, which acquired the entire UCSB quantum hardware team in 2014, integrating them into Google's quantum AI division."
+  },
+  {
+    "id": "Q08",
+    "type": "single-doc | factual",
+    "source_docs": ["DOC-8"],
+    "question": "What computational task did Google's Sycamore processor perform to demonstrate quantum supremacy in 2019, and why was this task chosen?",
+    "expected_answer": "Sycamore performed random quantum circuit sampling — it executed a pseudo-random sequence of quantum gate operations across all 53 qubits and sampled the output probability distribution. This task was chosen because its output is highly sensitive to the specific gate sequence, requiring classical simulation of a quantum state with 2^53 amplitudes, which Google estimated would take approximately 10,000 years on the best available classical supercomputer. The task was designed specifically to be difficult to simulate classically rather than to solve a practically useful problem."
+  },
+  {
+    "id": "Q09",
+    "type": "synthesis | two-doc",
+    "source_docs": ["DOC-1", "DOC-2"],
+    "question": "How did Deutsch's 1985 quantum Turing machine build directly upon the theoretical gap that Feynman identified in his 1981 proposal?",
+    "expected_answer": "Feynman's 1981 proposal identified that classical boolean computers cannot efficiently simulate quantum systems due to the exponential growth of required variables, and argued that a quantum mechanical computer was necessary — but he did not specify a formal mathematical model. Deutsch's 1985 quantum Turing machine filled this gap directly: it provided the rigorous theoretical framework that formalized what a quantum computer was, how it processed information through superposition across multiple computational paths, and what advantage it could offer. Deutsch also proved the first concrete quantum speedup through the Deutsch algorithm, transforming Feynman's informal challenge into a mathematically grounded research discipline."
+  },
+  {
+    "id": "Q10",
+    "type": "synthesis | two-doc",
+    "source_docs": ["DOC-3", "DOC-4"],
+    "question": "Compare the type of speedup offered by Shor's algorithm and Grover's algorithm, and explain why their implications for classical cryptography differ in severity.",
+    "expected_answer": "Shor's algorithm provides an exponential speedup over the best known classical factoring algorithms, while Grover's algorithm provides only a quadratic speedup for unstructured search. For cryptography, Shor's exponential speedup is catastrophic for asymmetric encryption schemes like RSA, which would be completely broken because their security depends on the classical intractability of factoring. Grover's quadratic speedup is a more limited threat: it halves the effective bit-security of symmetric ciphers (a 128-bit key becomes equivalent to a 64-bit key under quantum attack), which can be mitigated by simply doubling key lengths, rather than requiring entirely new cryptographic protocols."
+  },
+  {
+    "id": "Q11",
+    "type": "synthesis | two-doc",
+    "source_docs": ["DOC-6", "DOC-7"],
+    "question": "Describe the theoretical-to-experimental progression of quantum error correction from Shor's 1995 paper to the 2014 UCSB hardware demonstration.",
+    "expected_answer": "Peter Shor's 1995 paper established the theoretical foundation for quantum error correction by showing that a logical qubit could be encoded across nine physical qubits using syndrome measurements to detect and correct errors without collapsing the quantum state, circumventing the no-cloning constraint. This remained a theoretical framework for nearly two decades. In 2014, John Martinis' group at UCSB provided the first physical validation of this approach by building a 5-qubit superconducting array that performed real-time error detection using syndrome measurements consistent with Shor's theoretical model, demonstrating that the error correction concepts were physically implementable in superconducting hardware."
+  },
+  {
+    "id": "Q12",
+    "type": "synthesis | two-doc",
+    "source_docs": ["DOC-5", "DOC-8"],
+    "question": "Both D-Wave Systems and Google made major quantum computing announcements that were publicly contested — what was contested about each, and what do those disputes reveal about measuring genuine quantum advantage?",
+    "expected_answer": "D-Wave's quantum annealing hardware, released from 2011 onward, was contested by independent academic studies through 2014–2015 that found no consistent quantum speedup over classical optimization algorithms on the tested problem sets, calling into question whether the systems exhibited genuine quantum advantage. Google's 2019 Sycamore supremacy claim was contested by IBM, which argued that with sufficient disk storage, the same task could be completed classically in approximately 2.5 days rather than Google's estimate of 10,000 years. Both disputes reveal that claims of quantum advantage are highly sensitive to assumptions about the best available classical algorithms and hardware, and that defining and measuring genuine quantum advantage requires rigorous, independently reproducible benchmarks rather than vendor-defined tasks."
+  }
+]

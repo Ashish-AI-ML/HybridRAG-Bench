@@ -1,0 +1,50 @@
+DATASET METADATA INDEX
+======================
+Domain     : History of Quantum Computing
+Total Docs : 8
+Total Q&A  : 12
+Created for: AI Engineer Intern Assignment 3 — Custom RAG & Evaluation
+
+DOCUMENTS
+---------
+DOC-1  |  Feynman's 1981 Proposal for Quantum Simulation                  |  ~450 words
+DOC-2  |  David Deutsch and the Quantum Turing Machine (1985)             |  ~460 words
+DOC-3  |  Shor's Algorithm and Its Cryptographic Impact (1994)            |  ~460 words
+DOC-4  |  Grover's Search Algorithm (1996)                                |  ~440 words
+DOC-5  |  Early Quantum Hardware — IBM and D-Wave Systems                 |  ~480 words
+DOC-6  |  Quantum Error Correction — Foundations and No-Cloning           |  ~460 words
+DOC-7  |  Milestone Experimental Advances in Quantum Hardware (2000–2015) |  ~470 words
+DOC-8  |  Google's Quantum Supremacy Claim — Sycamore (2019)             |  ~450 words
+
+Q&A GROUND TRUTH BREAKDOWN
+---------------------------
+Single-doc questions    : 8  (Q01–Q08)
+Synthesis questions     : 4  (Q09–Q12, each spans 2 documents)
+Exact-match questions   : 3  (Q01 = year, Q02 = name+year, Q07 = name)
+
+Q01  →  DOC-1          | exact-match year      | 1981, Feynman
+Q02  →  DOC-2          | exact-match name+year | Deutsch, 1985
+Q03  →  DOC-3          | factual               | RSA vulnerability
+Q04  →  DOC-4          | factual               | amplitude amplification
+Q05  →  DOC-5          | factual               | D-Wave vs gate model
+Q06  →  DOC-6          | factual               | no-cloning theorem
+Q07  →  DOC-7          | exact-match name      | Martinis / Google acquisition
+Q08  →  DOC-8          | factual               | Sycamore task design
+Q09  →  DOC-1 + DOC-2  | synthesis             | Feynman → Deutsch connection
+Q10  →  DOC-3 + DOC-4  | synthesis             | Shor vs Grover speedup comparison
+Q11  →  DOC-6 + DOC-7  | synthesis             | error correction theory → experiment
+Q12  →  DOC-5 + DOC-8  | synthesis             | contested quantum advantage claims
+
+NON-OVERLAP GUARANTEE
+----------------------
+Each document covers a strictly bounded subtopic:
+- DOC-1: motivation and informal proposal (Feynman, 1981)
+- DOC-2: formal mathematical theory (Deutsch, 1985)
+- DOC-3: factoring algorithm and cryptographic threat (Shor, 1994)
+- DOC-4: search algorithm and complexity bounds (Grover, 1996)
+- DOC-5: first physical hardware attempts (IBM NMR + D-Wave, 1999–2015)
+- DOC-6: error correction theory and no-cloning theorem (Shor 1995, Steane 1996)
+- DOC-7: experimental hardware milestones (2000–2015, superconducting)
+- DOC-8: quantum supremacy claim (Google Sycamore, 2019)
+
+No document references events or content that belongs to another document's scope.
