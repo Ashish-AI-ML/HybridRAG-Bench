@@ -1,0 +1,18 @@
+# Development overrides — keeps LLM calls minimal for fast iteration
+pipeline:
+  collection_name: "hybridrag_quantum_dev"
+
+retrieval:
+  top_k_dense: 5
+  top_k_bm25: 5
+  final_top_k: 3
+  enable_reranker: false        # skip reranker for speed during dev
+
+generation:
+  provider: "mock"              # no API calls during dev
+
+evaluation:
+  judge_model: "heuristic"      # no LLM judge calls during dev
+
+api:
+  log_level: "debug"

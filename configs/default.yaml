@@ -1,0 +1,46 @@
+# HybridRAG Bench — Default Pipeline Configuration
+# All parameters controllable from here — no hardcoded values in source
+
+pipeline:
+  data_dir: "data/docs"
+  collection_name: "hybridrag_quantum"
+
+chunking:
+  strategy: "sentence"          # "sentence" | "semantic" (future)
+  chunk_size: 3                 # sentences per chunk
+  overlap: 1                    # overlapping sentences
+
+retrieval:
+  embedding_model: "all-MiniLM-L6-v2"
+  top_k_dense: 10               # dense candidates before fusion
+  top_k_bm25: 10                # BM25 candidates before fusion
+  final_top_k: 5                # final chunks after reranking
+  fusion_strategy: "rrf"        # "rrf" (Reciprocal Rank Fusion) | "linear"
+  rrf_k: 60                     # RRF constant (higher = softer ranks)
+  linear_bm25_weight: 0.3
+  linear_dense_weight: 0.7
+  reranker_model: "cross-encoder/ms-marco-MiniLM-L-6-v2"
+  enable_reranker: true
+
+generation:
+  # "gemini" | "openai" | "mock"  (overridden by LLM_PROVIDER env var)
+  provider: "gemini"
+  gemini_model: "gemini-2.0-flash"
+  openai_model: "gpt-4o-mini"
+  max_tokens: 512
+  temperature: 0.1
+  strict_grounding: true        # instruct model to answer only from context
+
+evaluation:
+  ground_truth_path: "data/ground_truth.json"
+  results_dir: "data/eval_results"
+  default_top_k: 5
+  faithfulness_threshold: 0.7   # minimum faithfulness score to pass
+  correctness_threshold: 0.6
+  judge_model: "gemini"         # "gemini" | "openai" | "heuristic"
+
+api:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 1
+  log_level: "info"

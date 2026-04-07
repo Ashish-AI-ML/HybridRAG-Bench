@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+*.egg-info/
+dist/
+build/
+.eggs/
+.pytest_cache/
+*.pyc
+
+# Environment & secrets
+.env
+!.env.example
+*.key
+
+# Qdrant local storage
+qdrant_storage/
+
+# Data outputs (keep structure, not files)
+data/eval_results/*.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ML artifacts
+*.pt
+*.pth
+*.bin
+*.onnx
+models/
+
+# Logs
+*.log
+logs/
+
+# Notebooks
+*.ipynb_checkpoints
+
+# OS
+Desktop.ini

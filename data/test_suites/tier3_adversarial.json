@@ -1,0 +1,38 @@
+[
+  {
+    "id": "T3-Q01",
+    "tier": "adversarial",
+    "type": "trick_question",
+    "source_docs": [],
+    "question": "What did Feynman say about Grover's search algorithm at the 1981 conference?",
+    "expected_answer": "INSUFFICIENT CONTEXT: Feynman's 1981 proposal predates Grover's algorithm by 15 years. Grover published his search algorithm in 1996. Feynman could not have commented on it.",
+    "notes": "Tests whether the system correctly refuses to answer or hallucinates a connection that doesn't exist."
+  },
+  {
+    "id": "T3-Q02",
+    "tier": "adversarial",
+    "type": "out_of_domain",
+    "source_docs": [],
+    "question": "What is the capital of France?",
+    "expected_answer": "INSUFFICIENT CONTEXT: This question is outside the scope of the indexed documents, which cover the history of quantum computing.",
+    "notes": "Tests out-of-domain rejection."
+  },
+  {
+    "id": "T3-Q03",
+    "tier": "adversarial",
+    "type": "ambiguous_entity",
+    "source_docs": ["DOC-3", "DOC-6"],
+    "question": "What algorithm did Shor invent for error correction?",
+    "expected_answer": "Peter Shor made two distinct contributions: his 1994 factoring algorithm (Shor's algorithm) for breaking RSA, and his 1995 quantum error correction scheme. The question about 'error correction' specifically refers to his 1995 work, which showed a logical qubit could be encoded across nine physical qubits.",
+    "notes": "Tests disambiguation — Shor is associated with two key works. System must not conflate them."
+  },
+  {
+    "id": "T3-Q04",
+    "tier": "adversarial",
+    "type": "conflation_trap",
+    "source_docs": ["DOC-5"],
+    "question": "Did D-Wave's quantum annealer successfully run Shor's algorithm?",
+    "expected_answer": "No. D-Wave's quantum annealing hardware is architecturally incompatible with universal gate-model quantum computers. Quantum annealing is designed for combinatorial optimization problems and cannot execute general quantum algorithms like Shor's algorithm.",
+    "notes": "Tests whether system correctly identifies D-Wave's architectural limitations."
+  }
+]

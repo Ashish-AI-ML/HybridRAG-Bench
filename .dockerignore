@@ -1,0 +1,11 @@
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+qdrant_storage/
+.env
+.git/
+.vscode/
+.idea/
+data/eval_results/

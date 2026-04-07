@@ -1,0 +1,38 @@
+[
+  {
+    "id": "T4-Q01",
+    "tier": "robustness",
+    "type": "paraphrase",
+    "source_docs": ["DOC-3"],
+    "question": "How does Shor's quantum factoring method break public-key cryptography?",
+    "expected_answer": "Shor's algorithm can factor large integers in polynomial time using quantum Fourier transform operations, directly undermining RSA's security which depends on the hardness of factoring large composite numbers.",
+    "notes": "Paraphrase of Q03 — tests retrieval robustness to synonym variation."
+  },
+  {
+    "id": "T4-Q02",
+    "tier": "robustness",
+    "type": "typo_tolerance",
+    "source_docs": ["DOC-2"],
+    "question": "Who created the quantom Turring machine model in 1985?",
+    "expected_answer": "David Deutsch formalized the quantum Turing machine in 1985.",
+    "notes": "Intentional typos — tests BM25 and dense retrieval tolerance."
+  },
+  {
+    "id": "T4-Q03",
+    "tier": "robustness",
+    "type": "incomplete_query",
+    "source_docs": ["DOC-1"],
+    "question": "Feynman 1981",
+    "expected_answer": "In 1981, Richard Feynman proposed that quantum mechanical computers could efficiently simulate quantum systems, a task intractable for classical computers.",
+    "notes": "Minimal query — tests whether BM25 exact match recovers the correct document."
+  },
+  {
+    "id": "T4-Q04",
+    "tier": "robustness",
+    "type": "verbose_query",
+    "source_docs": ["DOC-4"],
+    "question": "I am trying to understand the core computational mechanism behind Grover's quantum search algorithm — specifically, can you explain the mathematical process through which the algorithm achieves its quadratic speedup compared to classical brute-force search approaches?",
+    "expected_answer": "Grover's algorithm uses amplitude amplification: it initializes all states in superposition, then iteratively applies an oracle that flips the target state's phase and a diffusion operator that amplifies the target's probability, achieving a √N speedup after approximately π/4√N iterations.",
+    "notes": "Verbose/wordy query — tests dense retrieval's semantic compression ability."
+  }
+]

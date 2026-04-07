@@ -1,92 +1,381 @@
-# History of Quantum Computing: Custom RAG & Evaluation Framework
+# HybridRAG Bench
 
-## 1. Project Overview & Chosen Domain
-This project implements a custom Retrieval-Augmented Generation (RAG) system dedicated entirely to a highly specialized niche: **The History of Quantum Computing**. 
+**Production-grade Hybrid Retrieval-Augmented Generation System with Multi-Dimensional Evaluation**
 
-**Why this domain?** 
-The history of quantum computing is an exceptional proving ground for RAG architecture. 
-1. **Factual Density**: The core narrative relies on highly specific names (Shor, Feynman, Deutsch) and years (1981, 1994, 2019), enabling extremely rigorous exact-match measurement.
-2. **Dense Terminology**: Base LLMs typically hallucinate heavily when discussing quantum mechanics out of context (e.g., confusing annealing with universal gate models). Supplying accurate historical grounding immediately stabilizes generative outputs.
+> BM25 Lexical Retrieval · Qdrant Vector Store · Cross-Encoder Reranking · Automated 6-Dimension Evaluation · FastAPI · Streamlit Dashboard
 
-## 2. Dataset Description
-The dataset was painstakingly constructed directly by the researcher to ensure absolute systemic integrity. It features **strict subtopic isolation with zero content overlap**. If a fact exists in one document, it absolutely does not exist anywhere else. 
-- **Documents**: 8 independently constructed `.txt` documents.
-- **Size**: Approximately 440–480 words per document.
-- **Domain Scope**: Feynman's 1981 Proposal, Deutsch's Turing Machine, Shor's Factoring, Grover's Search, Early Hardware (NMR/D-Wave), Error Correction Foundations, Superconducting Milestones, and Google's "Sycamore" Supremacy. 
-- **Ground Truth**: A robust `ground_truth.json` file dictates 12 complex Q&A pairs carefully mapped back to target arrays. 
-    - *Q01-Q08*: Single-document evaluations.
-    - *Q09-Q12*: Advanced synthesis questions demanding multi-hop RAG retrievals spanning exactly 2 separate documents.
-    - *Metadata*: Document bounds, mappings, and exact-matches are rigorously detailed in `data/dataset_metadata.txt`.
+---
 
-## 3. RAG Pipeline Design
-The system prioritizes extreme computational transparency over massive abstract libraries. All logic operates strictly offline and incurs zero API costs.
+## Key Results
 
-- **Chunking Method (`src/chunker.py`)**: Uses precision sentence-level boundaries. Paragraph-level chunking consistently scoops up too much irrelevant historical padding, diluting the embeddings. We utilize 3-sentence blocks with a 1-sentence overlap. The overlap ensures mid-paragraph context transitions aren't violently decapitated by hard index limits.
-- **Embedding Model**: **`sentence-transformers/all-MiniLM-L6-v2`**. This 384-dimensional dense encoder runs natively on CPU hardware extremely quickly while retaining highly accurate semantic similarity mappings across technical terminology.
-- **Vector Store**: **`FAISS` (Facebook AI Similarity Search)**. Specifically utilizing normalized vectors and `faiss.IndexFlatIP` to calculate Cosine Similarity. Because the entire corpus maps into roughly 52 chunks, in-memory FAISS indexes operate instantaneously.
-- **LLM Prompt Strategy**: The prompt explicitly sandboxes the context away from the user query. The fundamental directive rigidly instructs the generator to solely exploit the provided Context array, ordering it to respond with "I don't know" rather than supplementing external pre-training weights regarding physics.
+Performance on the 12-query quantum computing benchmark (hybrid_rerank mode, top_k=5):
 
-## 4. Evaluation Framework
-A comprehensive, multi-tiered framework mathematically validates the retrieval and generation phases individually.
+| Metric | BM25 Only | Dense Only | Hybrid | Hybrid + Reranker |
+|---|---|---|---|---|
+| Precision@1 | — | — | — | Run `--ablation` to populate |
+| MRR | — | — | — | — |
+| NDCG@5 | — | — | — | — |
+| Semantic Similarity | — | — | — | — |
+| Faithfulness Score | — | — | — | — |
 
-**Execution Metrics (`src/evaluation/metrics.py`)**
-1. **Token Overlap**: `rouge-score` yields classic ROUGE-1 and ROUGE-L ratios measuring identical unigram crossover, catching basic structural integrity.
-2. **Semantic Similarity**: Passes the expected and generated outputs back through the `all-MiniLM-L6-v2` embedding engine and returns the Cosine distance to calculate true conceptual overlap, bypassing paraphrasing penalties.
-3. **Exact-Match Retrieval**: Extracts capitalized nouns (e.g., "Sycamore") and dates ("2019") from the expected text, verifying that 100% of the critical trivia successfully survived the generator's summarization.
+> Run `python scripts/run_evaluation.py --ablation` to generate your own comparison table.
 
-### Retrieval Results
-When tested against the custom cross-document dataset, the custom pipeline retrieved:
-- **Mean Precision@1**: `1.00`
-- **Mean Precision@3**: `0.97`
-- **Mean Reciprocal Rank (MRR)**: `1.00`
-*(The FAISS array effectively ranked the absolute target document in the #1 position across all 12 queries, even the mathematically complex `DOC-3, DOC-4` multi-hops).*
+---
 
-### Qualitative Terminal Framework
-A completely custom terminal UI (`eval_cli.py`) powers the grading of Coherence, Completeness, Factual Accuracy, and Grounding. The UX loop rigorously prevents corrupted user skips by rejecting empty strings, rendering inputs strictly into the JSON logging table:
-```text
-  +-----------------------+-------+
-  | Factual Correctness   |   1   |
-  | Completeness          |   2   |
-  | Coherence             |   3   |
-  | Grounding             |   1   |
-  +-----------------------+-------+
+## What This Project Is
+
+Most RAG tutorials show you how to point LangChain at a PDF and call it a day.  
+This project solves the two problems that actually matter in production:
+
+**Problem 1 — Dense-only retrieval fails on keyword-precise queries.**  
+Proper nouns (`Feynman`, `Sycamore`), exact dates (`1981`, `2019`), and acronyms (`RSA`, `NMR`) are systematically under-represented in embedding spaces. A hybrid approach combining BM25 lexical search with dense semantic retrieval — fused via Reciprocal Rank Fusion and optimized by a cross-encoder reranker — is the industry-standard solution.
+
+**Problem 2 — Most RAG systems ship with no systematic evaluation.**  
+"It answered my test questions" is not evidence. This project implements a six-dimension automated evaluation framework (retrieval quality, answer correctness, faithfulness, entity recall, latency profiling, cost estimation) with ablation comparison and timestamped regression tracking.
+
+---
+
+## System Architecture
+
+```mermaid
+graph TD
+    User([User Query]) --> |"e.g. What is Shor's algorithm?"| BM25
+    User --> Dense
+
+    subgraph "Stage 1: Retrieval"
+        BM25["Lexical Retrieval (BM25)"]:::lexical
+        Dense["Semantic Retrieval (Qdrant)"]:::semantic
+    end
+
+    BM25 -.->|Finds exact keywords| RRF
+    Dense -.->|Finds conceptual matches| RRF
+
+    subgraph "Stage 2: Fusion & Ranking"
+        RRF{"Reciprocal Rank Fusion (RRF)"}
+        RRF --> |"Merged & Deduplicated"| Reranker["Cross-Encoder Reranker\n(ms-marco-MiniLM)"]:::ranking
+    end
+
+    Reranker --> |"Top-K Grounded Chunks"| Prompt["System Prompt"]
+
+    Prompt --> Gen["Generator (Gemini/OpenAI/Mock)"]:::llm
+
+    subgraph "Stage 3: Generation"
+        Gen --> Output(["Final Grounded Answer\n+ Traceability & Latency Metrics"])
+    end
+    
+    classDef lexical fill:#0f172a,stroke:#38bdf8,stroke-width:2px,color:#fff
+    classDef semantic fill:#0f172a,stroke:#8b5cf6,stroke-width:2px,color:#fff
+    classDef ranking fill:#1e1b4b,stroke:#a78bfa,stroke-width:2px,color:#fff
+    classDef llm fill:#064e3b,stroke:#34d399,stroke-width:2px,color:#fff
 ```
 
-## 5. Challenges and Lessons Learned
-Building the full-stack architecture from empty Python files up to the metrics dashboard revealed three massive developmental lessons:
+### Why Each Component Exists
 
-1. **The "Trivia Mismatch" Evaluation Flaw**: The most insidious problem encountered was attempting to grade a generative LLM's "Grounding" (did it stick exclusively to the text?) against overly specific trivia questions (e.g. *"What specific chemical compound state was utilized... "*). The model was successfully retrieving the target document, but because the question only had one fundamental factual answer, evaluating "hallucinations vs. grounded knowledge" became impossible for the human grader. **Lesson:** *Questions driving RAG quality rubrics must fundamentally demand thematic synthesis rather than strict trivia lookup.*
-2. **Qualitative UX Data Corruption**: When initially testing the CLI tool, using standard `<Enter>` logic to skip score columns accidentally polluted the final telemetry JSON with `""` empty strings, silently breaking math pipeline averages. **Lesson:** *Human-in-the-loop scoring arrays must aggressively enforce strict input data-typing (e.g., rejecting all values outside exactly `1, 2, 3, n`) prior to appending the file logic.*
-3. **Cross-Document Semantic Bleeding**: During development, historically overlapping terms (like "quantum entanglement") occasionally confused basic term-frequency retrievers natively. **Lesson:** *Strictly bounding datasets (e.g. isolating Shor's 1994 logic strictly from Shor's 1995 logic) paired with dense dense embeddings (over standard TF-IDF models) is fundamentally required to successfully drive Precision@1 ratios.*
+| Component | What It Solves | Alternative Considered |
+|---|---|---|
+| **BM25** | Dense retrieval misses exact keyword matches | TF-IDF — rejected (no BM25 normalization) |
+| **Qdrant** | FAISS has no persistence, filtering, or incremental updates | FAISS — rejected (not production-suitable) |
+| **Cross-Encoder Reranker** | Bi-encoder retrieval ranking is approximate | LLM-based reranking — rejected (latency, cost) |
+| **RRF Fusion** | BM25 and cosine scores are incomparable scales | Linear combination — rejected (scale-sensitive) |
+| **Heuristic Faithfulness** | Detects hallucination without LLM API call overhead | RAGAS — available as future upgrade |
 
-## 6. How to Run This Project
+---
 
-### Prerequisites
-Before running any code, ensure you have Python 3.9+ installed and create a virtual environment to isolate the heavy ML dependencies:
+## Evaluation Framework
+
+Six dimensions measured automatically on every evaluation run:
+
+### Retrieval Quality
+- **Precision@K** — Fraction of retrieved chunks that are relevant
+- **Recall@K** — Fraction of relevant chunks found in top-K
+- **MRR** — Mean Reciprocal Rank of the first relevant document
+- **Hit Rate@K** — Did any relevant document appear in top-K?
+- **NDCG@K** — Position-weighted relevance gain
+
+### Generation Quality
+- **ROUGE-1 / ROUGE-L** — Token and subsequence overlap with reference answer
+- **Semantic Similarity** — Embedding cosine similarity (paraphrase-aware)
+- **Entity Recall** — Fraction of key named entities from reference present in generated answer
+- **Faithfulness Score** — Fraction of generated sentences semantically supported by retrieved context (hallucination proxy)
+
+### Operational
+- **Latency (p50 / p90 / p99)** — Per-stage wall-clock timing across all pipeline stages
+- **Token Usage** — Input/output token counts per query
+- **Cost Projection** — Monthly API cost estimate at 100/1K/10K queries per day
+
+---
+
+## Test Suite Structure
+
+| Tier | Purpose | Count |
+|---|---|---|
+| **Tier 1: Direct Lookup** | Basic factual retrieval (names, dates, exact facts) | 4 questions |
+| **Tier 2: Synthesis** | Multi-document cross-reference questions | 4 questions (Q09–Q12) |
+| **Tier 3: Adversarial** | Trick questions, conflation traps, out-of-domain | 4 questions |
+| **Tier 4: Robustness** | Paraphrases, typos, minimal/verbose queries | 4 questions |
+| **Full Ground Truth** | Combined benchmark | 12 questions |
+
+---
+
+## Quick Start
+
+### 1. Clone and Install
+
 ```bash
-# Create and activate a Virtual Environment
-python -m venv venv
-venv\Scripts\activate      # Windows
-source venv/bin/activate   # Mac/Linux
+git clone https://github.com/YOUR_USERNAME/HybridRAG-Bench.git
+cd HybridRAG-Bench
 
-# Install all dependencies (PyTorch, FAISS, Sentence-Transformers, etc.)
+python -m venv venv
+venv\Scripts\activate        # Windows
+# source venv/bin/activate   # Mac/Linux
+
 pip install -r requirements.txt
 ```
 
-### 1. Evaluate Retrieval Performance
-To test the core FAISS vector embeddings against the custom ground truth dataset and calculate Precision@K and Mean Reciprocal Rank:
+### 2. Configure
+
 ```bash
-python -m src.evaluation.retrieval_eval
+cp .env.example .env
+# Edit .env — add your GOOGLE_API_KEY for real LLM generation
+# Leave as mock for offline testing (no API key needed)
 ```
 
-### 2. Run the Qualitative Evaluation CLI
-To launch the interactive, terminal-based human grading UI (which strictly logs Factual Correctness, Completeness, Coherence, and Grounding):
+### 3. Run the Pipeline
+
 ```bash
-python -m src.evaluation.eval_cli
+# Test the end-to-end pipeline (mock mode — no API key needed)
+python src/pipeline.py
+
+# Run the full evaluation suite
+python scripts/run_evaluation.py
+
+# Run ablation comparison (all 4 retrieval modes)
+python scripts/run_evaluation.py --ablation
+
+# Launch the interactive dashboard
+streamlit run dashboard/app.py
+
+# Start the API server
+python scripts/run_api.py
+# → Docs at http://localhost:8000/docs
 ```
 
-### 3. Test the Full Pipeline
-To test an arbitrary query directly against the generator and retriever logic:
+### 4. Run Tests
+
 ```bash
-python -m src.pipeline
+# Unit tests (fast, no index building required)
+pytest tests/unit/ -v
+
+# Integration tests (builds full pipeline in mock/dev mode)
+pytest tests/integration/ -v
+
+# Full test suite
+pytest tests/ -v
 ```
+
+### 5. Docker
+
+```bash
+# Copy and configure environment
+cp .env.example .env  # add your API keys
+
+# Build and start all services
+docker-compose up --build
+
+# API at http://localhost:8000/docs
+# Dashboard at http://localhost:8501
+```
+
+---
+
+## API Reference
+
+### `GET /health`
+```json
+{
+  "status": "healthy",
+  "index_built": true,
+  "chunk_count": 52,
+  "provider": "gemini",
+  "version": "2.0.0"
+}
+```
+
+### `POST /v1/query`
+```json
+{
+  "question": "Why did Shor's algorithm threaten RSA encryption?",
+  "top_k": 5,
+  "mode": "hybrid_rerank",
+  "strict_grounding": true
+}
+```
+
+**Response includes**: generated answer, retrieved chunks with individual scores (BM25, dense, RRF, reranker), confidence score, source doc IDs, per-stage latency, token usage.
+
+### `POST /v1/evaluate`
+Evaluate a single question against a reference answer — returns all 9 quality metrics.
+
+### `GET /v1/index/stats`
+Returns corpus statistics: chunk count, document list, embedding dimensions.
+
+---
+
+## Project Structure
+
+```
+HybridRAG-Bench/
+├── configs/
+│   ├── default.yaml          # All pipeline parameters (no hardcoded values in source)
+│   └── dev.yaml              # Dev overrides (mock LLM, no reranker)
+├── src/
+│   ├── config.py             # Config management (YAML + env vars)
+│   ├── logger.py             # Colorized structured logging
+│   ├── pipeline.py           # End-to-end orchestrator
+│   ├── chunking/
+│   │   └── sentence_chunker.py   # Metadata-enriched sentence chunker
+│   ├── retrieval/
+│   │   ├── bm25_retriever.py     # BM25 lexical retrieval
+│   │   ├── dense_retriever.py    # Qdrant dense vector retrieval
+│   │   ├── hybrid_retriever.py   # RRF fusion + ablation modes
+│   │   └── reranker.py           # Cross-encoder reranking
+│   ├── generation/
+│   │   └── generator.py          # Multi-provider generator (Gemini/OpenAI/Mock)
+│   ├── evaluation/
+│   │   ├── retrieval_metrics.py  # P@K, Recall@K, MRR, HitRate, NDCG
+│   │   ├── generation_metrics.py # ROUGE, Semantic, Entity Recall, Faithfulness
+│   │   ├── cost_estimator.py     # Token tracking + cost projection
+│   │   └── suite_runner.py       # Full evaluation orchestrator
+│   └── api/
+│       ├── app.py                # FastAPI application
+│       └── schemas.py            # Pydantic request/response models
+├── dashboard/
+│   └── app.py                # Streamlit evaluation dashboard
+├── data/
+│   ├── docs/                 # 8 hand-crafted quantum computing documents
+│   ├── ground_truth.json     # 12-question benchmark (4 synthesis, 8 single-doc)
+│   ├── test_suites/          # Adversarial + robustness test tiers
+│   └── eval_results/         # Timestamped evaluation runs (regression tracking)
+├── tests/
+│   ├── unit/                 # Fast unit tests (metrics, chunker)
+│   └── integration/          # Full pipeline integration tests
+├── scripts/
+│   ├── run_api.py            # API launcher
+│   └── run_evaluation.py     # Evaluation CLI
+├── docs/
+│   └── architecture.md       # Design decisions and component rationale
+├── .env.example              # Configuration template
+├── configs/default.yaml      # Pipeline configuration
+├── Dockerfile                # Production container
+└── docker-compose.yml        # API + Dashboard services
+```
+
+---
+
+## Configuration Reference
+
+All parameters are in `configs/default.yaml`. Key settings:
+
+```yaml
+retrieval:
+  embedding_model: "all-MiniLM-L6-v2"
+  top_k_dense: 10          # Dense candidates before fusion
+  top_k_bm25: 10           # BM25 candidates before fusion
+  final_top_k: 5           # Final chunks after reranking
+  fusion_strategy: "rrf"   # Reciprocal Rank Fusion
+  rrf_k: 60                # RRF smoothing constant
+  enable_reranker: true    # Toggle for ablation testing
+  reranker_model: "cross-encoder/ms-marco-MiniLM-L-6-v2"
+
+generation:
+  provider: "gemini"        # "gemini" | "openai" | "mock"
+  gemini_model: "gemini-2.0-flash"
+  temperature: 0.1
+  strict_grounding: true    # Enforce context-only answers
+```
+
+Override any parameter via `configs/dev.yaml` or environment variables.
+
+---
+
+## Evaluation Suite Commands
+
+```bash
+# Standard evaluation (hybrid_rerank mode, full ground truth)
+python scripts/run_evaluation.py
+
+# Ablation study: compare all 4 retrieval modes
+python scripts/run_evaluation.py --ablation
+
+# Evaluate specific test tier
+python scripts/run_evaluation.py --suite tier3_adversarial
+
+# Change retrieval mode and top-k
+python scripts/run_evaluation.py --mode dense_only --top-k 3
+
+# Force rebuild the vector index before evaluating
+python scripts/run_evaluation.py --force-reindex
+```
+
+Results are saved to `data/eval_results/eval_<timestamp>.json` for regression tracking.
+
+---
+
+## Dataset
+
+**Domain**: History of Quantum Computing  
+**Corpus**: 8 hand-crafted documents (~450 words each), **zero content overlap** between documents — each covers a strictly bounded subtopic.
+
+| Document | Coverage |
+|---|---|
+| DOC-1 | Feynman's 1981 quantum simulation proposal |
+| DOC-2 | Deutsch's 1985 quantum Turing machine |
+| DOC-3 | Shor's 1994 factoring algorithm and RSA impact |
+| DOC-4 | Grover's 1996 quantum search algorithm |
+| DOC-5 | Early quantum hardware: IBM NMR and D-Wave |
+| DOC-6 | Quantum error correction and the no-cloning theorem |
+| DOC-7 | Superconducting hardware milestones (2000–2015) |
+| DOC-8 | Google's 2019 quantum supremacy claim (Sycamore) |
+
+**Ground Truth**: 12 Q&A pairs — 8 single-document, 4 multi-hop synthesis questions requiring evidence from two separate documents.
+
+---
+
+## Technical Decisions
+
+**Why not LangChain or LlamaIndex?**  
+Framework abstractions hide the engineering decisions that matter for interviews and production. Every component here is built from first principles using lightweight libraries (`rank_bm25`, `qdrant-client`, `sentence-transformers`). The architecture is transparent, auditable, and demonstrably understood.
+
+**Why Reciprocal Rank Fusion over linear score combination?**  
+BM25 produces term-frequency-based integer scores; cosine similarity produces floats in [-1, 1]. These scales are incompatible for direct addition. RRF uses rank positions instead of scores, making it robust to distribution differences between retrievers.
+
+**Why heuristic faithfulness over LLM-as-judge?**  
+LLM-as-judge faithfulness is the gold standard but adds latency and cost to every evaluation run. The heuristic (semantic sentence-level similarity against retrieved context) serves as a fast proxy for development and offline evaluation. LLM-as-judge can be dropped in as the `EVAL_JUDGE` config.
+
+---
+
+## Lessons Learned
+
+**1. The Evaluation Flaw Pattern** — Grading RAG groundedness on trivia-recall questions is invalid. A model can retrieve the correct document but fail the grounding rubric because the question has only one specific factual answer. Evaluation questions must demand *thematic synthesis*, not trivia lookup. This drove the redesign of the ground truth toward multi-hop synthesis questions.
+
+**2. Score Scale Incompatibility** — Attempting to combine BM25 and cosine similarity scores linearly produced unstable results because their distributions differ fundamentally. RRF's rank-based approach solved this without requiring learned fusion weights.
+
+**3. Perfect Metrics on Small Datasets Are Meaningless** — P@1 = 1.00 and MRR = 1.00 on 12 questions from an 8-document corpus with zero overlap guarantees is not evidence of system quality. The adversarial and robustness test tiers were added specifically to surface real failure modes that perfect scores on the base benchmark conceal.
+
+---
+
+## Future Work
+
+- [ ] LLM-as-judge faithfulness evaluation (Gemini/GPT-4o as authoritative judge)
+- [ ] Parent-child chunking (retrieve small chunks, expand for context)
+- [ ] Query decomposition (break multi-hop questions into sub-queries)
+- [ ] OpenTelemetry tracing for distributed pipeline observability
+- [ ] RAGAS framework integration for standardized metric comparison
+- [ ] Human feedback loop (capture ratings, analyze failure patterns)
+- [ ] PDF/DOCX multi-format document ingestion
+
+---
+
+## License
+
+MIT License — see [LICENSE](LICENSE)

@@ -1,0 +1,34 @@
+[
+  {
+    "id": "T1-Q01",
+    "tier": "direct_lookup",
+    "type": "exact-match (year + location)",
+    "source_docs": ["DOC-1"],
+    "question": "In what year did Richard Feynman first propose the idea of quantum mechanical computers, and at which conference?",
+    "expected_answer": "Richard Feynman delivered his proposal in 1981 at the First Conference on the Physics of Computation, held jointly at MIT and Tufts University."
+  },
+  {
+    "id": "T1-Q02",
+    "tier": "direct_lookup",
+    "type": "exact-match (name + year)",
+    "source_docs": ["DOC-2"],
+    "question": "Who formalized the quantum Turing machine in 1985?",
+    "expected_answer": "David Deutsch formalized the quantum Turing machine in his 1985 paper published in the Proceedings of the Royal Society of London."
+  },
+  {
+    "id": "T1-Q03",
+    "tier": "direct_lookup",
+    "type": "exact-match (name)",
+    "source_docs": ["DOC-7"],
+    "question": "Which researcher demonstrated real-time quantum error detection at UCSB in 2014?",
+    "expected_answer": "John Martinis and his group at UCSB demonstrated a 5-qubit superconducting array capable of detecting quantum errors in real time in 2014."
+  },
+  {
+    "id": "T1-Q04",
+    "tier": "direct_lookup",
+    "type": "factual",
+    "source_docs": ["DOC-8"],
+    "question": "What processor did Google use to claim quantum supremacy in 2019?",
+    "expected_answer": "Google used the Sycamore processor, a 53-qubit superconducting chip, to claim quantum supremacy in 2019."
+  }
+]
